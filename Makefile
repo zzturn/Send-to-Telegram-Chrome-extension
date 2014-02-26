@@ -1,2 +1,2 @@
 all:
-	zip -r ../pushover-for-google-chrome.zip ./*
+	zip -r ../pushover-for-chrome.zip ./*

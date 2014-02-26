@@ -59,6 +59,35 @@ var push_message = function (tab, selection) {
         }
     };
     return false;
+},
+setup_contextMenus = function() {
+    var context_click_handler = function(info, tab) {
+        if(info.menuItemId === 'context-page') {
+            push_message(tab);
+        } else if(info.menuItemId === 'context-link') {
+            push_message(tab, info.linkUrl);
+        } else if(info.menuItemId === 'context-selection') {
+            push_message(tab, info.selectionText);
+        }
+    };
+    chrome.contextMenus.removeAll();
+    // ["page","link","editable","image","video", "audio"];
+    chrome.contextMenus.create({
+        'title': 'Push this page',
+        'contexts': ['page'],
+        'id': 'context-page'
+    });
+    chrome.contextMenus.create({
+        'title': 'Push this link',
+        'contexts': ['link'],
+        'id': 'context-link'
+    });
+    chrome.contextMenus.create({
+        'title': 'Push this text',
+        'contexts': ['selection'],
+        'id': 'context-selection'
+    });
+    chrome.contextMenus.onClicked.addListener(context_click_handler);
 };
 
 chrome.browserAction.onClicked.addListener(function (tab) {
@@ -68,34 +97,4 @@ chrome.browserAction.onClicked.addListener(function (tab) {
         push_message(tab, text);
     });
 });
-
-function onClickHandler(info, tab) {
-    if(info.menuItemId === 'context-page') {
-        push_message(tab);
-    } else if(info.menuItemId === 'context-link') {
-        push_message(tab, info.linkUrl);
-    } else if(info.menuItemId === 'context-selection') {
-        push_message(tab, info.selectionText);
-    }
-};
-
-chrome.contextMenus.onClicked.addListener(onClickHandler);
-
-chrome.runtime.onInstalled.addListener(function() {
-  // ["page","link","editable","image","video", "audio"];
-  chrome.contextMenus.create({
-    'title': 'Push this page',
-    'contexts': ['page'],
-    'id': 'context-page'
-  });
-  chrome.contextMenus.create({
-    'title': 'Push this link',
-    'contexts': ['link'],
-    'id': 'context-link'
-  });
-  chrome.contextMenus.create({
-    'title': 'Push this text',
-    'contexts': ['selection'],
-    'id': 'context-selection'
-  });
-});
+setup_contextMenus();
