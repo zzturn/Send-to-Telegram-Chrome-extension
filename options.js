@@ -42,7 +42,7 @@ validate = function () {
                 } else {
                     show_message('OK, seems legit! Pushing to ' + device, 3);
                 }
-                chrome.extension.sendRequest({
+                chrome.runtime.sendMessage({
                     action: 'reload_contextMenus'
                 });
 

@@ -110,7 +110,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     });
 });
 
-chrome.extension.onRequest.addListener(function (request) {
+chrome.runtime.onMessage.addListener(function (request) {
     if (request && request.action == "reload_contextMenus")  {
         setup_contextMenus();
     }
