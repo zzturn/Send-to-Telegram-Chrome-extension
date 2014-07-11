@@ -61,8 +61,7 @@ var push_message = function (tab, selection, device) {
     return false;
 },
 setup_contextMenus = function() {
-
-    var devices=localStorage.device.split(',')//JSON.parse(localStorage.device);
+    var devices=(localStorage.device||'-').split(',');
     var context_click_handler = function(info, tab) {
         for(var i in devices){
             if(info.menuItemId === 'context-page'+devices[i]) {
@@ -111,4 +110,14 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     });
 });
 
-setup_contextMenus();
+var token = localStorage.token,
+    userkey = localStorage.userkey,
+    valid = localStorage.valid || '-';
+if (valid !== token + userkey) {
+        chrome.tabs.create({
+            url: 'options.html'
+        });
+}
+else{
+    setup_contextMenus();
+}
