@@ -12,11 +12,12 @@ show_message = function (message, hide) {
 },
 validate = function () {
     var token = localStorage.token || '',
-        userkey = localStorage.userkey || '';
+        userkey = localStorage.userkey || '',
         device = localStorage.device || '';
 
-        if(device==='(all devices)')
-            device=''
+    if (device === '(all devices)') {
+        device = '';
+    }
     if (!userkey || !token) {
         show_message('Please fill both fields!');
         return;
@@ -35,10 +36,11 @@ validate = function () {
         if (req.readyState === 4) {
             if (req.status === 200) {
                 localStorage.valid = token + userkey;
-                if(device==='')
+                if (device === '') {
                     show_message('OK, seems legit! Pushing to all devices', 5);
-                else
+                } else {
                     show_message('OK, seems legit! Pushing to ' + device, 5);
+                }
             } else {
                 localStorage.valid = '';
                 show_message('Something is fishy: ' + req.responseText);
