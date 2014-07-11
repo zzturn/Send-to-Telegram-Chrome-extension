@@ -1,6 +1,7 @@
 var push_message = function (tab, selection) {
     var token = localStorage.token,
         userkey = localStorage.userkey,
+        device = localStorage.device,
         valid = localStorage.valid || '-';
 
     if (valid !== token + userkey) {
@@ -13,6 +14,7 @@ var push_message = function (tab, selection) {
 
     var params = 'token=' + encodeURIComponent(token) +
         '&user=' + encodeURIComponent(userkey) +
+        '&device=' + encodeURIComponent(device) +
         '&title=' + encodeURIComponent(tab.title);
 
     if (selection) {
