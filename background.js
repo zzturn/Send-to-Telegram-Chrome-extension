@@ -68,6 +68,8 @@ setup_contextMenus = function() {
             push_message(tab);
         } else if(info.menuItemId === 'context-link') {
             push_message(tab, info.linkUrl);
+        } else if(info.menuItemId === 'context-image') {
+            push_message(tab, info.srcUrl);
         } else if(info.menuItemId === 'context-selection') {
             push_message(tab, info.selectionText);
         }
@@ -83,6 +85,11 @@ setup_contextMenus = function() {
         'title': 'Push this link',
         'contexts': ['link'],
         'id': 'context-link'
+    });
+    chrome.contextMenus.create({
+        'title': 'Push this image',
+        'contexts': ['image'],
+        'id': 'context-image'
     });
     chrome.contextMenus.create({
         'title': 'Push this text',
