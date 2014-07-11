@@ -1,7 +1,7 @@
 var push_message = function (tab, selection, device) {
     var token = localStorage.token,
         userkey = localStorage.userkey,
-        valid = localStorage.valid || '-';
+        valid = localStorage.valid || '-',
         device = device || '';
     if (valid !== token + userkey) {
         alert('Please check your settings!');
@@ -60,43 +60,43 @@ var push_message = function (tab, selection, device) {
     };
     return false;
 },
-setup_contextMenus = function() {
-    var devices=(localStorage.device||'-').split(',');
-    var context_click_handler = function(info, tab) {
-        for(var i in devices){
-            if(info.menuItemId === 'context-page'+devices[i]) {
-                push_message(tab, '', devices[i] );
-            } else if(info.menuItemId === 'context-link'+devices[i]) {
+setup_contextMenus = function () {
+    var devices = (localStorage.device || '-').split(',');
+    var context_click_handler = function (info, tab) {
+        for (var i in devices) {
+            if (info.menuItemId === 'context-page' + devices[i]) {
+                push_message(tab, '', devices[i]);
+            } else if (info.menuItemId === 'context-link' + devices[i]) {
                 push_message(tab, info.linkUrl, devices[i]);
-            } else if(info.menuItemId === 'context-image'+devices[i]) {
+            } else if (info.menuItemId === 'context-image' + devices[i]) {
                 push_message(tab, info.srcUrl, devices[i]);
-            } else if(info.menuItemId === 'context-selection'+devices[i]) {
+            } else if (info.menuItemId === 'context-selection' + devices[i]) {
                 push_message(tab, info.selectionText, devices[i]);
             }
         }
     };
     // ["page","link","editable","image","video", "audio"];
     chrome.contextMenus.removeAll();
-    for(var i in devices){
+    for (var i in devices) {
         chrome.contextMenus.create({
-            'title': 'Push this page to '+devices[i],
-            'contexts': ['page'],
-            'id': 'context-page'+devices[i]
+            'title': 'Push this page to ' + devices[i],
+                'contexts': ['page'],
+                'id': 'context-page' + devices[i]
         });
         chrome.contextMenus.create({
-            'title': 'Push this link to '+devices[i],
-            'contexts': ['link'],
-            'id': 'context-link'+devices[i]
+            'title': 'Push this link to ' + devices[i],
+                'contexts': ['link'],
+                'id': 'context-link' + devices[i]
         });
         chrome.contextMenus.create({
-            'title': 'Push this image to '+devices[i],
-            'contexts': ['image'],
-            'id': 'context-image'+devices[i]
+            'title': 'Push this image to ' + devices[i],
+                'contexts': ['image'],
+                'id': 'context-image' + devices[i]
         });
         chrome.contextMenus.create({
-            'title': 'Push this text to '+devices[i],
-            'contexts': ['selection'],
-            'id': 'context-selection'+devices[i]
+            'title': 'Push this text to ' + devices[i],
+                'contexts': ['selection'],
+                'id': 'context-selection' + devices[i]
         });
     }
     chrome.contextMenus.onClicked.addListener(context_click_handler);
@@ -110,14 +110,19 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     });
 });
 
+chrome.extension.onRequest.addListener(function (request) {
+    if (request && request.action == "reload_contextMenus")  {
+        setup_contextMenus();
+    }
+});
+
 var token = localStorage.token,
     userkey = localStorage.userkey,
     valid = localStorage.valid || '-';
 if (valid !== token + userkey) {
-        chrome.tabs.create({
-            url: 'options.html'
-        });
-}
-else{
+    chrome.tabs.create({
+        url: 'options.html'
+    });
+} else {
     setup_contextMenus();
 }

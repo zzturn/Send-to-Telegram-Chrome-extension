@@ -37,11 +37,15 @@ validate = function () {
             if (req.status === 200) {
                 localStorage.valid = token + userkey;
                 if (device === '') {
-                    show_message('OK, seems legit! Pushing to '+ JSON.parse(req.responseText).devices, 3);
-                    localStorage.device=JSON.parse(req.responseText).devices;
+                    show_message('OK, seems legit! Pushing to ' + JSON.parse(req.responseText).devices, 3);
+                    localStorage.device = JSON.parse(req.responseText).devices;
                 } else {
                     show_message('OK, seems legit! Pushing to ' + device, 3);
                 }
+                chrome.extension.sendRequest({
+                    action: 'reload_contextMenus'
+                });
+
             } else {
                 localStorage.valid = '';
                 show_message('Something is fishy: ' + req.responseText);
