@@ -1,8 +1,8 @@
 var push_message = function (tab, selection, device) {
     var token = localStorage.token,
         userkey = localStorage.userkey,
-        valid = localStorage.valid || '-',
-        device = device || '';
+        valid = localStorage.valid || '-';
+    device = device || '';
     if (valid !== token + userkey) {
         alert('Please check your settings!');
         chrome.tabs.create({
