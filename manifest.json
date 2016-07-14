@@ -1,6 +1,6 @@
 {
   "name": "Pushover for Google Chrome",
-  "version": "0.0.3",
+  "version": "0.0.3.1",
   "description": "Pushover for Google Chrome, with your own key and token.",
   "browser_action": {
     "default_icon": "128.png",

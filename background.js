@@ -4,10 +4,6 @@ var push_message = function (tab, selection, device) {
         valid = localStorage.valid || '-',
         sound = localStorage.sound;
 
-    if(!device) {
-        device = '';
-    }
-
     if (valid !== token + userkey) {
         alert('Please check your settings!');
         chrome.tabs.create({
@@ -18,8 +14,11 @@ var push_message = function (tab, selection, device) {
 
     var params = 'token=' + encodeURIComponent(token) +
         '&user=' + encodeURIComponent(userkey) +
-        '&device=' + encodeURIComponent(device) +
         '&title=' + encodeURIComponent(tab.title);
+
+    if(device) {
+        params += '&device=' + encodeURIComponent(device);
+    }
 
     if (selection) {
         params += '&message=' + encodeURIComponent(selection.substring(0, 512));
