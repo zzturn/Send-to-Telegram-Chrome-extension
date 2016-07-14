@@ -159,7 +159,7 @@ validate = function() {
             if (req.status === 200) {
                 localStorage.valid = token + userkey;
                 update_devices(response.devices);
-                show_message('OK, seems legit! Please review the devices checkboxes below.', 15);
+                show_message('OK, seems legit! Please review the device checkboxes below.', 15);
                 reload_contextmenus();
             } else {
                 localStorage.valid = '';
