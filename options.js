@@ -25,23 +25,123 @@ sounds = [
     {value: "updown", text: "Up Down (long)"},
     {value: "none", text: "None (silent)"}
 ],
-show_message = function (message, hide) {
+show_message = function (message, hide_in_seconds) {
     $('message').innerHTML = message;
-    if (hide) {
+    if (hide_in_seconds) {
         setTimeout(function () {
             $('message').innerHTML = '&nbsp;';
-        }, 5000);
+        }, (hide_in_seconds || 5) * 1000);
     }
 
 },
+reload_contextmenus = function() {
+    chrome.runtime.sendMessage({
+        action: 'reload_contextMenus'
+    });
+},
+split_by_comma_list = function(value) {
+    if(!value) {
+        return []
+    }
+    return value.split(',')
+},
+draw_devices = function() {
+    if(!localStorage.devices_all) {
+        return;
+    }
+    var devices_all = split_by_comma_list(localStorage.devices_all),
+        devices_badge = split_by_comma_list(localStorage.devices_badge),
+        devices_menu = split_by_comma_list(localStorage.devices_menu),
+        create_checkbox = function(name, value) {
+            var label = document.createElement('label'),
+                chbox = document.createElement('input'),
+                text = document.createElement('span'),
+                list;
+
+            if(name === 'badge') {
+                list = devices_badge;
+            } else {
+                list = devices_menu;
+            }
+
+            chbox.type = 'checkbox';
+            chbox.value = value;
+
+            if(list.indexOf(value) >= 0) {
+                chbox.checked = true;
+            }
+
+            chbox.onchange = function() {
+                if(name === 'badge') {
+                    var vlist = split_by_comma_list(localStorage.devices_badge);
+                } else {
+                    var vlist = split_by_comma_list(localStorage.devices_menu);
+                }
+
+                if(this.checked && vlist.indexOf(value) === -1) {
+                    vlist.push(value);
+                } else if (!this.checked && vlist.indexOf(value) >= 0) {
+                    vlist.splice(vlist.indexOf(value), 1);
+                }
+                vlist = vlist.join(',');
+                if(name === 'badge') {
+                    localStorage.devices_badge = vlist
+                } else {
+                    localStorage.devices_menu = vlist;
+                }
+                console.log('Check:', name, value, this.checked, vlist);
+                reload_contextmenus();
+            };
+            label.appendChild(chbox);
+            text.innerHTML = value;
+            label.appendChild(text);
+            return label;
+
+
+        }
+
+    $('devices_badge').innerHTML = '';
+    $('devices_menu').innerHTML = '';
+
+    for (var i = 0; i < devices_all.length; i++) {
+        var device = devices_all[i];
+        $('devices_badge').appendChild(create_checkbox('badge', devices_all[i]));
+        $('devices_menu').appendChild(create_checkbox('menu', devices_all[i]));
+    }
+
+},
+update_devices = function(devices) {
+    var devices_badge = split_by_comma_list(localStorage.devices_badge),
+        devices_menu = split_by_comma_list(localStorage.devices_menu),
+        list;
+
+    localStorage.devices_all = devices.join(',');
+
+    if(devices_badge) {
+        list = [];
+        for (var i = 0; i < devices_badge.length; i++) {
+            if(devices.indexOf(devices_badge[i]) !== -1) {
+                list.push(devices_badge[i]);
+            }
+        }
+        localStorage.devices_badge = list.join(',');
+    }
+
+    if(devices_menu) {
+        list = [];
+        for (var i = 0; i < devices_menu.length; i++) {
+            if(devices.indexOf(devices_menu[i]) !== -1) {
+                list.push(devices_menu[i]);
+            }
+        }
+        localStorage.devices_menu = list.join(',');
+    }
+    return draw_devices();
+},
 validate = function () {
     var token = localStorage.token || '',
-        userkey = localStorage.userkey || '',
-        device = localStorage.device || '';
+        userkey = localStorage.userkey || '';
 
-    if (device === '(all devices)' || device.split(',').length > 1) {
-        device = '';
-    }
     if (!userkey || !token) {
         show_message('Please fill both fields!');
         return;
@@ -52,27 +152,25 @@ validate = function () {
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send(
         'token=' + encodeURIComponent(token) +
-        '&user=' + encodeURIComponent(userkey) +
-        '&device=' + encodeURIComponent(device)
+        '&user=' + encodeURIComponent(userkey)
     );
 
     req.onreadystatechange = function () {
         if (req.readyState === 4) {
+            var response = JSON.parse(req.responseText);
+            console.log(response);
             if (req.status === 200) {
                 localStorage.valid = token + userkey;
-                if (device === '') {
-                    show_message('OK, seems legit! Pushing to ' + JSON.parse(req.responseText).devices, 3);
-                    localStorage.device = JSON.parse(req.responseText).devices;
-                } else {
-                    show_message('OK, seems legit! Pushing to ' + device, 3);
-                }
-                chrome.runtime.sendMessage({
-                    action: 'reload_contextMenus'
-                });
-
+                update_devices(response.devices);
+                show_message('OK, seems legit! Please review the devices checkboxes below.', 15);
+                reload_contextmenus();
             } else {
                 localStorage.valid = '';
-                show_message('Something is fishy: ' + req.responseText);
+                if(response.errors) {
+                    show_message('Error: ' + response.errors);
+                } else {
+                    show_message('Something is fishy: ' + req.responseText);
+                }
             }
         }
     };
@@ -80,7 +178,6 @@ validate = function () {
 save = function () {
     localStorage.userkey = $('userkey').value;
     localStorage.token = $('token').value;
-    localStorage.device = $('device').value;
     var sound = sounds[$('sounds').selectedIndex];
     if(sound) {
         localStorage.sound = sounds[$('sounds').selectedIndex].value;
@@ -91,7 +188,6 @@ save = function () {
 load = function () {
     $('userkey').value = localStorage.userkey || '';
     $('token').value = localStorage.token || '';
-    $('device').value = localStorage.device || '(all devices)';
 
     for (var i = 0; i < sounds.length; i++) {
         var sound = sounds[i],
@@ -103,6 +199,7 @@ load = function () {
         }
         $('sounds').appendChild(option);
     }
+    draw_devices();
 };
 
 $('save').addEventListener('click', save);

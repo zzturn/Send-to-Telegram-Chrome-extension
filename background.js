@@ -1,22 +1,33 @@
-var push_message = function (tab, selection, device) {
-    var token = localStorage.token,
-        userkey = localStorage.userkey,
-        valid = localStorage.valid || '-',
-        sound = localStorage.sound;
+var combo_valid = function(do_alert) {
+    var valid = localStorage.valid || '',
+        token = localStorage.token || '',
+        userkey = localStorage.userkey || '';
 
     if (valid !== token + userkey) {
-        alert('Please check your settings!');
+        if(do_alert) {
+            alert(do_alert);
+        }
         chrome.tabs.create({
             url: 'options.html'
         });
         return false;
     }
+    return true;
+},
+push_message = function(source, tab, selection, device) {
+    if(!combo_valid('Please check your settings!')) {
+        return false
+    }
 
-    var params = 'token=' + encodeURIComponent(token) +
-        '&user=' + encodeURIComponent(userkey) +
-        '&title=' + encodeURIComponent(tab.title);
+    var params = 'token=' + encodeURIComponent(localStorage.token) +
+                 '&user=' + encodeURIComponent(localStorage.userkey) +
+                 '&title=' + encodeURIComponent(tab.title);
 
-    if(device) {
+    if(source === 'badge' && localStorage.devices_badge) {
+        device = localStorage.devices_badge;
+    }
+
+    if(device) {
         params += '&device=' + encodeURIComponent(device);
     }
 
@@ -27,8 +38,8 @@ var push_message = function (tab, selection, device) {
         params += '&message=' + encodeURIComponent(tab.url.substring(0, 500));
     }
 
-    if(sound) {
-        params += '&sound=' + encodeURIComponent(sound);
+    if(localStorage.sound) {
+        params += '&sound=' + encodeURIComponent(localStorage.sound);
     }
 
     var req = new XMLHttpRequest();
@@ -70,52 +81,46 @@ var push_message = function (tab, selection, device) {
     return false;
 },
 setup_contextMenus = function () {
-    var devices = (localStorage.device || '-').split(',');
-    var context_click_handler = function (info, tab) {
-        for (var i in devices) {
-            if (info.menuItemId === 'context-page' + devices[i]) {
-                push_message(tab, '', devices[i]);
-            } else if (info.menuItemId === 'context-link' + devices[i]) {
-                push_message(tab, info.linkUrl, devices[i]);
-            } else if (info.menuItemId === 'context-image' + devices[i]) {
-                push_message(tab, info.srcUrl, devices[i]);
-            } else if (info.menuItemId === 'context-selection' + devices[i]) {
-                push_message(tab, info.selectionText, devices[i]);
-            }
-        }
-    };
-    // ["page","link","editable","image","video", "audio"];
+    var devices = localStorage.devices_menu;
     chrome.contextMenus.removeAll();
-    for (var i in devices) {
-        chrome.contextMenus.create({
-            'title': 'Push this page to ' + devices[i],
-                'contexts': ['page'],
-                'id': 'context-page' + devices[i]
-        });
-        chrome.contextMenus.create({
-            'title': 'Push this link to ' + devices[i],
-                'contexts': ['link'],
-                'id': 'context-link' + devices[i]
-        });
-        chrome.contextMenus.create({
-            'title': 'Push this image to ' + devices[i],
-                'contexts': ['image'],
-                'id': 'context-image' + devices[i]
-        });
-        chrome.contextMenus.create({
-            'title': 'Push this text to ' + devices[i],
-                'contexts': ['selection'],
-                'id': 'context-selection' + devices[i]
-        });
+    if(devices) {
+        devices = devices.split(',');
+        for (var i = 0; i < devices.length; i++) {
+            chrome.contextMenus.create({
+                'title': 'Push this page to ' + devices[i],
+                    'contexts': ['page'],
+                    'id': 'context-page:' + devices[i]
+            });
+            chrome.contextMenus.create({
+                'title': 'Push this link to ' + devices[i],
+                    'contexts': ['link'],
+                    'id': 'context-link:' + devices[i]
+            });
+            chrome.contextMenus.create({
+                'title': 'Push this image to ' + devices[i],
+                    'contexts': ['image'],
+                    'id': 'context-image:' + devices[i]
+            });
+            chrome.contextMenus.create({
+                'title': 'Push this text to ' + devices[i],
+                    'contexts': ['selection'],
+                    'id': 'context-selection:' + devices[i]
+            });
+        }
     }
-    chrome.contextMenus.onClicked.addListener(context_click_handler);
+},
+split_by_comma_list = function(value) {
+    if(!value) {
+        return []
+    }
+    return value.split(',')
 };
 
 chrome.browserAction.onClicked.addListener(function (tab) {
     chrome.tabs.sendRequest(tab.id, {
         method: 'selection'
     }, function (text) {
-        push_message(tab, text, '');
+        push_message('badge', tab, text);
     });
 });
 
@@ -125,13 +130,26 @@ chrome.runtime.onMessage.addListener(function (request) {
     }
 });
 
-var token = localStorage.token,
-    userkey = localStorage.userkey,
-    valid = localStorage.valid || '-';
-if (valid !== token + userkey) {
-    chrome.tabs.create({
-        url: 'options.html'
-    });
-} else {
+chrome.contextMenus.onClicked.addListener(function (info, tab) {
+    var devices = split_by_comma_list(localStorage.devices_menu);
+    for (var i = 0; i < devices.length; i++) {
+        if (info.menuItemId === 'context-page:' + devices[i]) {
+            push_message('menu', tab, '', devices[i]);
+        } else if (info.menuItemId === 'context-link:' + devices[i]) {
+            push_message('menu', tab, info.linkUrl, devices[i]);
+        } else if (info.menuItemId === 'context-image:' + devices[i]) {
+            push_message('menu', tab, info.srcUrl, devices[i]);
+        } else if (info.menuItemId === 'context-selection:' + devices[i]) {
+            push_message('menu', tab, info.selectionText, devices[i]);
+        }
+    }
+});
+
+if (!localStorage.devices_all && localStorage.device) {
+    localStorage.devices_all = localStorage.device;
+    localStorage.removeItem('device');
+}
+
+if(combo_valid()) {
     setup_contextMenus();
 }
