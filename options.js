@@ -30,7 +30,7 @@ show_message = function (message, hide_in_seconds) {
     if (hide_in_seconds) {
         setTimeout(function () {
             $('message').innerHTML = '&nbsp;';
-        }, (hide_in_seconds || 5) * 1000);
+        }, hide_in_seconds * 1000);
     }
 
 },
@@ -88,16 +88,13 @@ draw_devices = function() {
                     localStorage.devices_badge = vlist
                 } else {
                     localStorage.devices_menu = vlist;
+                    reload_contextmenus();
                 }
-                console.log('Check:', name, value, this.checked, vlist);
-                reload_contextmenus();
             };
             label.appendChild(chbox);
             text.innerHTML = value;
             label.appendChild(text);
             return label;
-
-
         }
 
     $('devices_badge').innerHTML = '';
