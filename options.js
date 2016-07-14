@@ -1,4 +1,4 @@
-var $ = function (id) {
+var $ = function(id) {
     return document.getElementById(id);
 },
 sounds = [
@@ -25,14 +25,13 @@ sounds = [
     {value: "updown", text: "Up Down (long)"},
     {value: "none", text: "None (silent)"}
 ],
-show_message = function (message, hide_in_seconds) {
+show_message = function(message, hide_in_seconds) {
     $('message').innerHTML = message;
     if (hide_in_seconds) {
-        setTimeout(function () {
+        setTimeout(function() {
             $('message').innerHTML = '&nbsp;';
         }, hide_in_seconds * 1000);
     }
-
 },
 reload_contextmenus = function() {
     chrome.runtime.sendMessage({
@@ -40,13 +39,13 @@ reload_contextmenus = function() {
     });
 },
 split_by_comma_list = function(value) {
-    if(!value) {
+    if (!value) {
         return []
     }
     return value.split(',');
 },
 draw_devices = function() {
-    if(!localStorage.devices_all) {
+    if (!localStorage.devices_all) {
         return;
     }
     var devices_all = split_by_comma_list(localStorage.devices_all),
@@ -58,7 +57,7 @@ draw_devices = function() {
                 text = document.createElement('span'),
                 list;
 
-            if(name === 'badge') {
+            if (name === 'badge') {
                 list = devices_badge;
             } else {
                 list = devices_menu;
@@ -67,24 +66,24 @@ draw_devices = function() {
             chbox.type = 'checkbox';
             chbox.value = value;
 
-            if(list.indexOf(value) >= 0) {
+            if (list.indexOf(value) >= 0) {
                 chbox.checked = true;
             }
 
             chbox.onchange = function() {
-                if(name === 'badge') {
+                if (name === 'badge') {
                     var vlist = split_by_comma_list(localStorage.devices_badge);
                 } else {
                     var vlist = split_by_comma_list(localStorage.devices_menu);
                 }
 
-                if(this.checked && vlist.indexOf(value) === -1) {
+                if (this.checked && vlist.indexOf(value) === -1) {
                     vlist.push(value);
                 } else if (!this.checked && vlist.indexOf(value) >= 0) {
                     vlist.splice(vlist.indexOf(value), 1);
                 }
                 vlist = vlist.join(',');
-                if(name === 'badge') {
+                if (name === 'badge') {
                     localStorage.devices_badge = vlist
                 } else {
                     localStorage.devices_menu = vlist;
@@ -114,20 +113,20 @@ update_devices = function(devices) {
 
     localStorage.devices_all = devices.join(',');
 
-    if(devices_badge) {
+    if (devices_badge) {
         list = [];
         for (var i = 0; i < devices_badge.length; i++) {
-            if(devices.indexOf(devices_badge[i]) !== -1) {
+            if (devices.indexOf(devices_badge[i]) !== -1) {
                 list.push(devices_badge[i]);
             }
         }
         localStorage.devices_badge = list.join(',');
     }
 
-    if(devices_menu) {
+    if (devices_menu) {
         list = [];
         for (var i = 0; i < devices_menu.length; i++) {
-            if(devices.indexOf(devices_menu[i]) !== -1) {
+            if (devices.indexOf(devices_menu[i]) !== -1) {
                 list.push(devices_menu[i]);
             }
         }
@@ -135,7 +134,7 @@ update_devices = function(devices) {
     }
     return draw_devices();
 },
-validate = function () {
+validate = function() {
     var token = localStorage.token || '',
         userkey = localStorage.userkey || '';
 
@@ -152,7 +151,7 @@ validate = function () {
         '&user=' + encodeURIComponent(userkey)
     );
 
-    req.onreadystatechange = function () {
+    req.onreadystatechange = function() {
         if (req.readyState === 4) {
             var response = JSON.parse(req.responseText);
             console.log(response);
@@ -163,7 +162,7 @@ validate = function () {
                 reload_contextmenus();
             } else {
                 localStorage.valid = '';
-                if(response.errors) {
+                if (response.errors) {
                     show_message('Error: ' + response.errors);
                 } else {
                     show_message('Something is fishy: ' + req.responseText);
@@ -172,17 +171,17 @@ validate = function () {
         }
     };
 },
-save = function () {
+save = function() {
     localStorage.userkey = $('userkey').value;
     localStorage.token = $('token').value;
     var sound = sounds[$('sounds').selectedIndex];
-    if(sound) {
+    if (sound) {
         localStorage.sound = sounds[$('sounds').selectedIndex].value;
     }
     show_message('Saved!');
     validate();
 },
-load = function () {
+load = function() {
     $('userkey').value = localStorage.userkey || '';
     $('token').value = localStorage.token || '';
 

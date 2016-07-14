@@ -1,10 +1,10 @@
-var combo_valid = function(do_alert) {
+var combo_valid = function(do_alert) {
     var valid = localStorage.valid || '',
         token = localStorage.token || '',
         userkey = localStorage.userkey || '';
 
     if (valid !== token + userkey) {
-        if(do_alert) {
+        if (do_alert) {
             alert(do_alert);
         }
         chrome.tabs.create({
@@ -15,7 +15,7 @@ var combo_valid = function(do_alert) {
     return true;
 },
 push_message = function(source, tab, selection, device) {
-    if(!combo_valid('Please check your settings!')) {
+    if (!combo_valid('Please check your settings!')) {
         return false
     }
 
@@ -23,11 +23,11 @@ push_message = function(source, tab, selection, device) {
                  '&user=' + encodeURIComponent(localStorage.userkey) +
                  '&title=' + encodeURIComponent(tab.title);
 
-    if(source === 'badge' && localStorage.devices_badge) {
+    if (source === 'badge' && localStorage.devices_badge) {
         device = localStorage.devices_badge;
     }
 
-    if(device) {
+    if (device) {
         params += '&device=' + encodeURIComponent(device);
     }
 
@@ -38,7 +38,7 @@ push_message = function(source, tab, selection, device) {
         params += '&message=' + encodeURIComponent(tab.url.substring(0, 500));
     }
 
-    if(localStorage.sound) {
+    if (localStorage.sound) {
         params += '&sound=' + encodeURIComponent(localStorage.sound);
     }
 
@@ -47,7 +47,7 @@ push_message = function(source, tab, selection, device) {
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send(params);
 
-    req.onreadystatechange = function () {
+    req.onreadystatechange = function() {
         if (req.readyState === 4) {
             if (req.status === 200) {
                 chrome.browserAction.setBadgeBackgroundColor({
@@ -56,7 +56,7 @@ push_message = function(source, tab, selection, device) {
                 chrome.browserAction.setBadgeText({
                     'text': 'OK'
                 });
-                setTimeout(function () {
+                setTimeout(function() {
                     chrome.browserAction.setBadgeText({
                         'text': ''
                     });
@@ -68,7 +68,7 @@ push_message = function(source, tab, selection, device) {
                 chrome.browserAction.setBadgeBackgroundColor({
                     'color': '#ff0000'
                 });
-                setTimeout(function () {
+                setTimeout(function() {
                     chrome.browserAction.setBadgeText({
                         'text': ''
                     });
@@ -81,64 +81,64 @@ push_message = function(source, tab, selection, device) {
     return false;
 },
 split_by_comma_list = function(value) {
-    if(!value) {
+    if (!value) {
         return []
     }
     return value.split(',');
 },
 get_menu_devices = function() {
     var devices = split_by_comma_list(localStorage.devices_menu);
-    if(!devices.length) {
+    if (!devices.length) {
         devices = split_by_comma_list(localStorage.devices_all);
     }
     return devices;
-}
-setup_contextMenus = function () {
+},
+setup_contextMenus = function() {
     var devices = get_menu_devices();
     chrome.contextMenus.removeAll();
-    if(devices) {
+    if (devices) {
         for (var i = 0; i < devices.length; i++) {
             chrome.contextMenus.create({
                 'title': 'Push this page to ' + devices[i],
-                    'contexts': ['page'],
-                    'id': 'context-page:' + devices[i]
+                'contexts': ['page'],
+                'id': 'context-page:' + devices[i]
             });
             chrome.contextMenus.create({
                 'title': 'Push this link to ' + devices[i],
-                    'contexts': ['link'],
-                    'id': 'context-link:' + devices[i]
+                'contexts': ['link'],
+                'id': 'context-link:' + devices[i]
             });
             chrome.contextMenus.create({
                 'title': 'Push this image to ' + devices[i],
-                    'contexts': ['image'],
-                    'id': 'context-image:' + devices[i]
+                'contexts': ['image'],
+                'id': 'context-image:' + devices[i]
             });
             chrome.contextMenus.create({
                 'title': 'Push this text to ' + devices[i],
-                    'contexts': ['selection'],
-                    'id': 'context-selection:' + devices[i]
+                'contexts': ['selection'],
+                'id': 'context-selection:' + devices[i]
             });
         }
     }
 };
 
-chrome.browserAction.onClicked.addListener(function (tab) {
+chrome.browserAction.onClicked.addListener(function(tab) {
     chrome.tabs.sendRequest(tab.id, {
         method: 'selection'
-    }, function (text) {
+    }, function(text) {
         push_message('badge', tab, text);
     });
 });
 
-chrome.runtime.onMessage.addListener(function (request) {
-    if (request && request.action == "reload_contextMenus")  {
+chrome.runtime.onMessage.addListener(function(request) {
+    if (request && request.action == "reload_contextMenus") {
         setup_contextMenus();
     }
 });
 
-chrome.contextMenus.onClicked.addListener(function (info, tab) {
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
     var devices = get_menu_devices();
-    if(!devices.length) {
+    if (!devices.length) {
         return;
     }
     for (var i = 0; i < devices.length; i++) {
@@ -159,6 +159,6 @@ if (!localStorage.devices_all && localStorage.device) {
     localStorage.removeItem('device');
 }
 
-if(combo_valid()) {
+if (combo_valid()) {
     setup_contextMenus();
 }
