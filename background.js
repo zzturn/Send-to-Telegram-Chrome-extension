@@ -16,7 +16,7 @@ var combo_valid = function(do_alert) {
 },
 push_message = function(source, tab, selection, device) {
     if (!combo_valid('Please check your settings!')) {
-        return false
+        return false;
     }
 
     var params = 'token=' + encodeURIComponent(localStorage.token) +
@@ -82,7 +82,7 @@ push_message = function(source, tab, selection, device) {
 },
 split_by_comma_list = function(value) {
     if (!value) {
-        return []
+        return [];
     }
     return value.split(',');
 },

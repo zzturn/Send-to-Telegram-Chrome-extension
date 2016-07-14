@@ -40,7 +40,7 @@ reload_contextmenus = function() {
 },
 split_by_comma_list = function(value) {
     if (!value) {
-        return []
+        return [];
     }
     return value.split(',');
 },
@@ -71,10 +71,11 @@ draw_devices = function() {
             }
 
             chbox.onchange = function() {
+                var vlist;
                 if (name === 'badge') {
-                    var vlist = split_by_comma_list(localStorage.devices_badge);
+                    vlist = split_by_comma_list(localStorage.devices_badge);
                 } else {
-                    var vlist = split_by_comma_list(localStorage.devices_menu);
+                    vlist = split_by_comma_list(localStorage.devices_menu);
                 }
 
                 if (this.checked && vlist.indexOf(value) === -1) {
@@ -84,7 +85,7 @@ draw_devices = function() {
                 }
                 vlist = vlist.join(',');
                 if (name === 'badge') {
-                    localStorage.devices_badge = vlist
+                    localStorage.devices_badge = vlist;
                 } else {
                     localStorage.devices_menu = vlist;
                     reload_contextmenus();
@@ -94,7 +95,7 @@ draw_devices = function() {
             text.innerHTML = value;
             label.appendChild(text);
             return label;
-        }
+        };
 
     $('devices_badge').innerHTML = '';
     $('devices_menu').innerHTML = '';
@@ -125,9 +126,9 @@ update_devices = function(devices) {
 
     if (devices_menu) {
         list = [];
-        for (var i = 0; i < devices_menu.length; i++) {
-            if (devices.indexOf(devices_menu[i]) !== -1) {
-                list.push(devices_menu[i]);
+        for (var j = 0; j < devices_menu.length; j++) {
+            if (devices.indexOf(devices_menu[j]) !== -1) {
+                list.push(devices_menu[j]);
             }
         }
         localStorage.devices_menu = list.join(',');
