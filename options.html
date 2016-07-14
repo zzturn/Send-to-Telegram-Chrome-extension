@@ -8,7 +8,7 @@
             padding: 80px;
             font-family: Helvetica, Arial, Serif;
         }
-        input, button {
+        input, button, select, option {
             border-radius: 5px;
             background-color: rgb(235, 235, 235);
             padding: 5px;
@@ -17,6 +17,9 @@
         }
         input {
             width: 300px;
+        }
+        select {
+            width: 310px;
         }
         td {
             padding: 5px;
@@ -48,6 +51,9 @@
         <tr>
             <td>Push to Device:
             <td><input id='device' value='(all devices)'>
+        <tr>
+            <td>Sound:
+            <td><select id="sounds"></select>
         <tr>
             <td>
             <td><button id='save'>Save</button>

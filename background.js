@@ -1,8 +1,13 @@
 var push_message = function (tab, selection, device) {
     var token = localStorage.token,
         userkey = localStorage.userkey,
-        valid = localStorage.valid || '-';
-    device = device || '';
+        valid = localStorage.valid || '-',
+        sound = localStorage.sound;
+
+    if(!device) {
+        device = '';
+    }
+
     if (valid !== token + userkey) {
         alert('Please check your settings!');
         chrome.tabs.create({
@@ -15,11 +20,16 @@ var push_message = function (tab, selection, device) {
         '&user=' + encodeURIComponent(userkey) +
         '&device=' + encodeURIComponent(device) +
         '&title=' + encodeURIComponent(tab.title);
+
     if (selection) {
         params += '&message=' + encodeURIComponent(selection.substring(0, 512));
         params += '&url=' + encodeURIComponent(tab.url.substring(0, 500));
     } else {
         params += '&message=' + encodeURIComponent(tab.url.substring(0, 500));
+    }
+
+    if(sound) {
+        params += '&sound=' + encodeURIComponent(sound);
     }
 
     var req = new XMLHttpRequest();
