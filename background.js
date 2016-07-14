@@ -80,11 +80,23 @@ push_message = function(source, tab, selection, device) {
     };
     return false;
 },
+split_by_comma_list = function(value) {
+    if(!value) {
+        return []
+    }
+    return value.split(',');
+},
+get_menu_devices = function() {
+    var devices = split_by_comma_list(localStorage.devices_menu);
+    if(!devices.length) {
+        devices = split_by_comma_list(localStorage.devices_all);
+    }
+    return devices;
+}
 setup_contextMenus = function () {
-    var devices = localStorage.devices_menu;
+    var devices = get_menu_devices();
     chrome.contextMenus.removeAll();
     if(devices) {
-        devices = devices.split(',');
         for (var i = 0; i < devices.length; i++) {
             chrome.contextMenus.create({
                 'title': 'Push this page to ' + devices[i],
@@ -108,12 +120,6 @@ setup_contextMenus = function () {
             });
         }
     }
-},
-split_by_comma_list = function(value) {
-    if(!value) {
-        return []
-    }
-    return value.split(',')
 };
 
 chrome.browserAction.onClicked.addListener(function (tab) {
@@ -131,7 +137,10 @@ chrome.runtime.onMessage.addListener(function (request) {
 });
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
-    var devices = split_by_comma_list(localStorage.devices_menu);
+    var devices = get_menu_devices();
+    if(!devices.length) {
+        return;
+    }
     for (var i = 0; i < devices.length; i++) {
         if (info.menuItemId === 'context-page:' + devices[i]) {
             push_message('menu', tab, '', devices[i]);

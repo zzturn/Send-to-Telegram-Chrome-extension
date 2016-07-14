@@ -43,7 +43,7 @@ split_by_comma_list = function(value) {
     if(!value) {
         return []
     }
-    return value.split(',')
+    return value.split(',');
 },
 draw_devices = function() {
     if(!localStorage.devices_all) {
