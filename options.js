@@ -35,7 +35,7 @@ show_message = function(message, hide_in_seconds) {
 },
 reload_contextmenus = function() {
     chrome.runtime.sendMessage({
-        action: 'reload_contextMenus'
+        action: 'reload-contextmenus'
     });
 },
 split_by_comma_list = function(value) {
@@ -197,6 +197,10 @@ load = function() {
         $('sounds').appendChild(option);
     }
     draw_devices();
+    if(localStorage._options_msg) {
+        show_message(localStorage._options_msg);
+        localStorage.removeItem('_options_msg');
+    }
 };
 
 $('save').addEventListener('click', save);

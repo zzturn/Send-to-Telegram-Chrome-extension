@@ -1,21 +1,40 @@
-var combo_valid = function(do_alert) {
+var open_options = function(msg) {
+    if(msg) {
+        localStorage._options_msg = msg;
+    }
+    if (chrome.runtime.openOptionsPage) {
+        return chrome.runtime.openOptionsPage();
+    }
+    return chrome.tabs.create({
+        url: chrome.runtime.getURL('options.html')
+    });
+},
+combo_valid = function() {
     var valid = localStorage.valid || '',
         token = localStorage.token || '',
         userkey = localStorage.userkey || '';
 
-    if (valid !== token + userkey) {
-        if (do_alert) {
-            alert(do_alert);
-        }
-        chrome.tabs.create({
-            url: 'options.html'
-        });
+    if (!valid || valid !== token + userkey) {
+        open_options('Please check your configuration!');
         return false;
     }
     return true;
 },
+show_badge_text = function(color, text, timeout) {
+    chrome.browserAction.setBadgeBackgroundColor({
+        'color': color
+    });
+    chrome.browserAction.setBadgeText({
+        'text': text
+    });
+    setTimeout(function() {
+        chrome.browserAction.setBadgeText({
+            'text': ''
+        });
+    }, timeout * 1000);
+},
 push_message = function(source, tab, selection, device) {
-    if (!combo_valid('Please check your settings!')) {
+    if (!combo_valid()) {
         return false;
     }
 
@@ -50,31 +69,16 @@ push_message = function(source, tab, selection, device) {
     req.onreadystatechange = function() {
         if (req.readyState === 4) {
             if (req.status === 200) {
-                chrome.browserAction.setBadgeBackgroundColor({
-                    'color': '#006400'
-                });
-                chrome.browserAction.setBadgeText({
-                    'text': 'OK'
-                });
-                setTimeout(function() {
-                    chrome.browserAction.setBadgeText({
-                        'text': ''
-                    });
-                }, 2000);
+                show_badge_text('#006400', 'OK', 2);
             } else {
-                chrome.browserAction.setBadgeText({
-                    'text': 'FAIL'
-                });
-                chrome.browserAction.setBadgeBackgroundColor({
-                    'color': '#ff0000'
-                });
-                setTimeout(function() {
-                    chrome.browserAction.setBadgeText({
-                        'text': ''
-                    });
-                }, 2000);
-                // Lets blast the user with the response :)
-                alert('ERROR: ' + req.responseText);
+                var response = JSON.parse(req.responseText);
+                if(response.errors) {
+                    alert('Error: ' + response.errors);
+                } else {
+                    // Lets blast the user with the response :)
+                    alert('Error: ' + req.responseText);
+                }
+                show_badge_text('#ff0000', 'FAIL', 5);
             }
         }
     };
@@ -93,31 +97,19 @@ get_menu_devices = function() {
     }
     return devices;
 },
-setup_contextMenus = function() {
-    var devices = get_menu_devices();
+setup_context_menus = function() {
+    var devices = get_menu_devices(),
+        ctxs = ['page', 'link', 'image', 'selection'];
     chrome.contextMenus.removeAll();
-    if (devices) {
-        for (var i = 0; i < devices.length; i++) {
-            chrome.contextMenus.create({
-                'title': 'Push this page to ' + devices[i],
-                'contexts': ['page'],
-                'id': 'context-page:' + devices[i]
-            });
-            chrome.contextMenus.create({
-                'title': 'Push this link to ' + devices[i],
-                'contexts': ['link'],
-                'id': 'context-link:' + devices[i]
-            });
-            chrome.contextMenus.create({
-                'title': 'Push this image to ' + devices[i],
-                'contexts': ['image'],
-                'id': 'context-image:' + devices[i]
-            });
-            chrome.contextMenus.create({
-                'title': 'Push this text to ' + devices[i],
-                'contexts': ['selection'],
-                'id': 'context-selection:' + devices[i]
-            });
+    if (devices.length) {
+        for(var j = 0; j < ctxs.length; j++) {
+            for (var i = 0; i < devices.length; i++) {
+                chrome.contextMenus.create({
+                    'title': 'Push this ' + ctxs[j] + ' to ' + devices[i],
+                    'contexts': [ctxs[j]],
+                    'id': 'ctx:' + ctxs[j] + ':' + devices[i]
+                });
+            }
         }
     }
 };
@@ -131,25 +123,24 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.runtime.onMessage.addListener(function(request) {
-    if (request && request.action == "reload_contextMenus") {
-        setup_contextMenus();
+    if (request && request.action == "reload-contextmenus") {
+        setup_context_menus();
     }
 });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
     var devices = get_menu_devices();
-    if (!devices.length) {
-        return;
-    }
-    for (var i = 0; i < devices.length; i++) {
-        if (info.menuItemId === 'context-page:' + devices[i]) {
-            push_message('menu', tab, '', devices[i]);
-        } else if (info.menuItemId === 'context-link:' + devices[i]) {
-            push_message('menu', tab, info.linkUrl, devices[i]);
-        } else if (info.menuItemId === 'context-image:' + devices[i]) {
-            push_message('menu', tab, info.srcUrl, devices[i]);
-        } else if (info.menuItemId === 'context-selection:' + devices[i]) {
-            push_message('menu', tab, info.selectionText, devices[i]);
+    if (devices.length) {
+        for (var i = 0; i < devices.length; i++) {
+            if (info.menuItemId === 'ctx:page:' + devices[i]) {
+                return push_message('menu', tab, '', devices[i]);
+            } else if (info.menuItemId === 'ctx:link:' + devices[i]) {
+                return push_message('menu', tab, info.linkUrl, devices[i]);
+            } else if (info.menuItemId === 'ctx:image:' + devices[i]) {
+                return push_message('menu', tab, info.srcUrl, devices[i]);
+            } else if (info.menuItemId === 'ctx:selection:' + devices[i]) {
+                return push_message('menu', tab, info.selectionText, devices[i]);
+            }
         }
     }
 });
@@ -160,5 +151,5 @@ if (!localStorage.devices_all && localStorage.device) {
 }
 
 if (combo_valid()) {
-    setup_contextMenus();
+    setup_context_menus();
 }
