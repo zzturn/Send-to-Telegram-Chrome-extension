@@ -40,7 +40,9 @@ push_message = function(source, tab, selection, device) {
 
     var params = 'token=' + encodeURIComponent(localStorage.token) +
                  '&user=' + encodeURIComponent(localStorage.userkey) +
-                 '&title=' + encodeURIComponent(tab.title);
+                 '&title=' + encodeURIComponent(tab.title) +
+                 '&url=' + encodeURIComponent(tab.url.substring(0, 500)) +
+                 '&url_title=' + encodeURIComponent('Open the link');
 
     if (source === 'badge' && localStorage.devices_badge) {
         device = localStorage.devices_badge;
@@ -52,7 +54,6 @@ push_message = function(source, tab, selection, device) {
 
     if (selection) {
         params += '&message=' + encodeURIComponent(selection.substring(0, 512));
-        params += '&url=' + encodeURIComponent(tab.url.substring(0, 500));
     } else {
         params += '&message=' + encodeURIComponent(tab.url.substring(0, 500));
     }
