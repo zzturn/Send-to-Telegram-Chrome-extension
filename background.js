@@ -38,34 +38,45 @@ push_message = function(source, tab, selection, device) {
         return false;
     }
 
-    var params = 'token=' + encodeURIComponent(localStorage.token) +
-                 '&user=' + encodeURIComponent(localStorage.userkey) +
-                 '&title=' + encodeURIComponent(tab.title) +
-                 '&url=' + encodeURIComponent(tab.url.substring(0, 500)) +
-                 '&url_title=' + encodeURIComponent('Open the link');
+    // var params = 'token=' + encodeURIComponent(localStorage.token) +
+    //              '&user=' + encodeURIComponent(localStorage.userkey) +
+    //              '&title=' + encodeURIComponent(tab.title) +
+    //              '&url=' + encodeURIComponent(tab.url.substring(0, 500)) +
+    //              '&url_title=' + encodeURIComponent('Open the link');
 
-    if (source === 'badge' && localStorage.devices_badge) {
-        device = localStorage.devices_badge;
-    }
+    // if (source === 'badge' && localStorage.devices_badge) {
+    //     device = localStorage.devices_badge;
+    // }
 
-    if (device) {
-        params += '&device=' + encodeURIComponent(device);
-    }
+    // if (device) {
+    //     params += '&device=' + encodeURIComponent(device);
+    // }
+
+    // if (selection) {
+    //     params += '&message=' + encodeURIComponent(selection.substring(0, 512));
+    // } else {
+    //     params += '&message=' + encodeURIComponent(tab.url.substring(0, 500));
+    // }
+
+    // if (localStorage.sound) {
+    //     params += '&sound=' + encodeURIComponent(localStorage.sound);
+    // }
 
     if (selection) {
-        params += '&message=' + encodeURIComponent(selection.substring(0, 512));
+        var text = encodeURIComponent(selection.substring(0, 512));
     } else {
-        params += '&message=' + encodeURIComponent(tab.url.substring(0, 500));
-    }
-
-    if (localStorage.sound) {
-        params += '&sound=' + encodeURIComponent(localStorage.sound);
+        var text = encodeURIComponent(tab.url.substring(0, 500));
     }
 
     var req = new XMLHttpRequest();
-    req.open('POST', 'https://api.pushover.net/1/messages.json', true);
-    req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    req.send(params);
+    var url = 'https://api.telegram.org/bot' + 
+                     localStorage.token + 
+                    '/sendMessage';
+    url += '?chat_id=' + encodeURIComponent(localStorage.userkey);
+    url += '&text=' + text;
+    req.open('GET', url, true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send();
 
     req.onreadystatechange = function() {
         if (req.readyState === 4) {
@@ -85,21 +96,24 @@ push_message = function(source, tab, selection, device) {
     };
     return false;
 },
-split_by_comma_list = function(value) {
-    if (!value) {
-        return [];
-    }
-    return value.split(',');
-},
-get_menu_devices = function() {
-    var devices = split_by_comma_list(localStorage.devices_menu);
-    if (!devices.length) {
-        devices = split_by_comma_list(localStorage.devices_all);
-    }
-    return devices;
-},
+
+// split_by_comma_list = function(value) {
+//     if (!value) {
+//         return [];
+//     }
+//     return value.split(',');
+// },
+// get_menu_devices = function() {
+//     var devices = split_by_comma_list(localStorage.devices_menu);
+//     if (!devices.length) {
+//         devices = split_by_comma_list(localStorage.devices_all);
+//     }
+//     return devices;
+// },
+
 setup_context_menus = function() {
-    var devices = get_menu_devices(),
+    // var devices = get_menu_devices(),
+    var devices = ['Telegram Bot'],
         ctxs = ['page', 'link', 'image', 'selection'];
     chrome.contextMenus.removeAll();
     if (devices.length) {
@@ -130,7 +144,8 @@ chrome.runtime.onMessage.addListener(function(request) {
 });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
-    var devices = get_menu_devices();
+    // var devices = get_menu_devices();
+    var devices = ['Telegram Bot'];
     if (devices.length) {
         for (var i = 0; i < devices.length; i++) {
             if (info.menuItemId === 'ctx:page:' + devices[i]) {
