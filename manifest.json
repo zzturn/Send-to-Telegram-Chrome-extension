@@ -1,20 +1,20 @@
 {
   "name": "Send-to-Telegram for Google Chrome",
-  "version": "0.0.4.3",
+  "version": "0.0.0.1",
   "description": "Send-to-Telegram for Google Chrome, with your own key and token.",
   "browser_action": {
-    "default_icon": "128.png",
+    "default_icon": "tg.png",
     "default_title": "Push this page!"
   },
   "background": {
     "scripts": ["background.js"]
   },
   "icons": {
-      "128": "128.png"
+      "128": "tg.png"
   },
   "options_page": "options.html",
   "permissions": [
-    "tabs", "http://*/*", "https://*/*", "contextMenus"
+    "tabs", "https://api.telegram.org/*", "contextMenus"
   ],
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
