@@ -14,7 +14,7 @@
   },
   "options_page": "options.html",
   "permissions": [
-    "tabs", "https://api.telegram.org/*", "contextMenus"
+    "tabs", "http://*/*", "https://*/*", "contextMenus"
   ],
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],

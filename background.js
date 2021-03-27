@@ -74,6 +74,7 @@ push_message = function(source, tab, selection, device) {
                     '/sendMessage';
     url += '?chat_id=' + encodeURIComponent(localStorage.userkey);
     url += '&text=' + text;
+    url += encodeURIComponent('\n\nFrom: \n' + tab.title + '\n' + tab.url)
     req.open('GET', url, true);
     req.setRequestHeader("Content-Type", "application/json");
     req.send();
