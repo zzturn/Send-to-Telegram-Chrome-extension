@@ -1,7 +1,7 @@
 {
-  "name": "Send-to-Telegram for Google Chrome",
-  "version": "0.0.0.1",
-  "description": "Send-to-Telegram for Google Chrome, with your own key and token.",
+  "name": "Send to Telegram for Google Chrome",
+  "version": "0.0.0.2",
+  "description": "Send to Telegram for Google Chrome, with your own key and token.",
   "browser_action": {
     "default_icon": "tg.png",
     "default_title": "Push this page!"
