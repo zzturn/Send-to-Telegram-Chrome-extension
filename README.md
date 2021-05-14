@@ -33,7 +33,7 @@ You can use this extension intuitively:
 
 ## License
 
-This project is licensed under the MIT License, see the [LICENSE](LISENCE) file for details.
+This project is licensed under the MIT License, see the [LICENSE](https://github.com/phguo/Send-to-Telegram-Chrome-extension/blob/master/LICENSE) file for details.
 
 ## Acknowledgments
 
