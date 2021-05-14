@@ -1,17 +1,40 @@
 # Send-to-Telegram for Google Chrome
 
-Very simple Chrome -> Telegram Bot extension, with your own key and token :)
+This is a Chrome extension that allow you to send web content (tab, text, image) to your own "Telegram Bot" using official Telegram API, such that your can sync instersting things across devices, i.e., your phone, your PC, and your laptop. 
 
-If some text is selected on page, then that selection is sent as message
-and address as an additional url. If not, current address is the message.
+This project is an alternative for [Pushbullet](https://www.pushbullet.com/) which stopped release on iOS ([Not Available on iOS : PushBullet](https://www.reddit.com/r/PushBullet/comments/eirc1m/not_available_on_ios/)). Since third party server is not required for this extension, so you do not need to worry about privacy.
 
-<!-- Get it from [Chrome Web Store](https://chrome.google.com/webstore/detail/pushover-for-google-chrom/oahkmlimeakfgbphhacanjhedadnkojo) -->
+This extension can be installed from [Chrome Web Store - Send to Telegram for Google Chrome](https://chrome.google.com/webstore/detail/send-to-telegram-for-goog/dgblfklicldlbclahclbkeiacpiiancc) (recommended) or the [release page](https://github.com/phguo/Send-to-Telegram-Chrome-extension/releases/latest).
 
+## Getting Start
 
-<!-- 
-### This is not an official plugin!
+0. Install "Send to Telegram for Google Chrome" from [Chrome Web Store](https://chrome.google.com/webstore/detail/send-to-telegram-for-goog/dgblfklicldlbclahclbkeiacpiiancc).
+1. Create a Telegram Bot following [Bots: An introduction for developers (telegram.org)](https://core.telegram.org/bots#6-botfather) and get your bot `<API token>`.
+2. Get your `<User ID> ` by visiting `https://api.telegram.org/bot<API token>/getUpdates` after you send arbitrary content to your bot in telegram APP. The field "id" in the HTTP response is your `<User ID>`.
+3. Fill your `<API token>` and `<User ID>` in the extension setting page. If everything is going on smoothly, the setting page will show a green "Saved!" and your bot will send your a massage of "Setting for 'Send-to-Telegram' successfully."
 
-The author of this plugin has no affiliation with Superblock, LLC., nor is this
-plugin endorsed or supported in any shape or form by the Superblock, LLC.
+## Usage
 
-More info about Pushover can be found from [pushover.net](https://pushover.net) -->
+You can use this extension intuitively:
+
+- Send tab to your bot: click on the extension icon.
+- Send text to your bot: select web content and right click.
+- Send image to your bot: right click on the image.
+
+## Changelog
+
+- [v0.9](https://github.com/phguo/Send-to-Telegram-Chrome-extension/releases/tag/v0.9) - Mar. 31, 2021
+  - The first release.
+
+## TODO
+
+- [ ] Obtain `<API token>` automatically.
+- [ ] Open new tab in Chrome when a URL is send to bot from phone.
+
+## License
+
+This project is licensed under the MIT License, see the [LICENSE](LISENCE) file for details.
+
+## Acknowledgments
+
+This project was forked from [rahimnathwani/pushover-for-chrome](https://github.com/rahimnathwani/pushover-for-chrome) for Pushover.

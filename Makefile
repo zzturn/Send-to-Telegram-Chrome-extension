@@ -1,2 +1,2 @@
 all:
-	zip -r ../pushover-for-chrome.zip ./*
+	zip -r ../Send-to-Telegram-Chrome-extension.zip ./*
