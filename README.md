@@ -18,7 +18,7 @@ This extension can be installed from [Chrome Web Store - Send to Telegram for Go
 You can use this extension intuitively:
 
 - Send **tab** to your bot
-  - click on the top right extension icon [Telegram icon](https://github.com/phguo/Send-to-Telegram-Chrome-extension/blob/master/tg.png?raw=true){:height="15%" width="15%"}.
+  - click on the top right extension icon <img src="https://github.com/phguo/Send-to-Telegram-Chrome-extension/blob/master/tg.png" alt="Telegram icon" width="15" height="15">.
 - Send **text** to your bot
   - select web content and right click -> `Push this selection to Telegram Bot`.
 - Send **image** to your bot
