@@ -33,6 +33,8 @@ You can use this extension intuitively:
 
 ## TODO
 
+- [ ] Send image file instead of URL (suggested by [通过 Telegram Bot 推送网页内容到手机 - V2EX](https://www.v2ex.com/t/777006#r_10527353)).
+- [ ] Set up API URL manually (suggested by [通过 Telegram Bot 推送网页内容到手机 - V2EX](https://www.v2ex.com/t/777006#r_10527433)).
 - [ ] Obtain `<API token>` automatically.
 - [ ] Open new tab in Chrome when a URL is send to bot from phone.
 
