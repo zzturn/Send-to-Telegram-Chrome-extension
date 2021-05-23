@@ -1,6 +1,6 @@
 # Send-to-Telegram for Google Chrome
 
-![visitors](https://visitor-badge.glitch.me/badge?page_id=phguo.Send-to-Telegram-Chrome-extension)
+![visitors](https://visitor-badge.glitch.me/badge?page_id=phguo.Send-to-Telegram-Chrome-extension)![Chrome Web Store](https://img.shields.io/chrome-web-store/users/dgblfklicldlbclahclbkeiacpiiancc?color=brightgreen&logo=google-chrome)![license: MIT](https://img.shields.io/badge/license-MIT-green)
 
 This is a Chrome extension that allow you to send web content (tab, text, image) to your own "Telegram Bot" using official Telegram API, such that your can sync instersting things across devices, i.e., your phone, your PC, and your laptop. 
 
