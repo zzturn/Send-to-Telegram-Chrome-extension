@@ -2,6 +2,8 @@
 
 [![visitors](https://visitor-badge.glitch.me/badge?page_id=phguo.Send-to-Telegram-Chrome-extension)](https://github.com/phguo/Send-to-Telegram-Chrome-extension) [![Chrome Web Store](https://img.shields.io/chrome-web-store/users/dgblfklicldlbclahclbkeiacpiiancc?color=brightgreen&logo=google-chrome)](https://chrome.google.com/webstore/detail/send-to-telegram-for-goog/dgblfklicldlbclahclbkeiacpiiancc) [![license: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/phguo/Send-to-Telegram-Chrome-extension/blob/master/LICENSE)
 
+__** IT WORKS (UPDATED: 2022-03-27) **__
+
 This is a Chrome extension that allow you to send web content (tab, text, image) to your own "Telegram Bot" using official Telegram API, such that your can sync interesting things across devices, i.e., your phone, your PC, and your laptop. 
 
 This project is an alternative for [Pushbullet](https://www.pushbullet.com/) which stopped release on iOS ([Not Available on iOS : PushBullet](https://www.reddit.com/r/PushBullet/comments/eirc1m/not_available_on_ios/)). Since third party server is not required for this extension, so you do not need to worry about privacy.
