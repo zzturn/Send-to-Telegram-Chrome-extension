@@ -4,7 +4,7 @@
 
 <a href="https://www.producthunt.com/posts/send-to-telegram-a-chrome-extension?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-send&#0045;to&#0045;telegram&#0045;a&#0045;chrome&#0045;extension" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=338928&theme=light" alt="Send&#0032;to&#0032;Telegram&#0058;&#0032;A&#0032;Chrome&#0032;Extension - Send&#0032;web&#0032;content&#0032;to&#0032;your&#0032;Telegram&#0032;bot&#0032;privately&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
-__** IT WORKS (UPDATED: 2022-03-27) **__
+__** IT WORKS (UPDATED: 2023-03-03) **__
 
 This is a Chrome extension that allow you to send web content (tab, text, image) to your own "Telegram Bot" using official Telegram API, such that your can sync interesting things across devices, i.e., your phone, your PC, and your laptop. 
 
