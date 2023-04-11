@@ -39,6 +39,7 @@ You can use this extension intuitively:
 
 ## TODO
 
+- [ ] Open link sent from phone.
 - [ ] Add shortcut (suggested by [brucmao](https://www.v2ex.com/t/777006#r_10550028)).
 - [ ] Add user interface for sending custom content (suggested by [he110comex](https://www.v2ex.com/t/777006#r_10544806) and [Tgeek](https://www.v2ex.com/t/777006#r_10549271)).
 - [ ] Send image file instead of URL (suggested by [jemyzhang](https://www.v2ex.com/t/777006#r_10527353)).
