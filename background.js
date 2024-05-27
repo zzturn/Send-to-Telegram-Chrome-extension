@@ -69,7 +69,7 @@ push_message = function(source, tab, selection, device) {
     }
 
     var req = new XMLHttpRequest();
-    var url = 'https://api.telegram.org/bot' + 
+    var url = localStorage.domain + '/bot' + 
                      localStorage.token + 
                     '/sendMessage';
     url += '?chat_id=' + encodeURIComponent(localStorage.userkey);

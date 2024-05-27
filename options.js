@@ -138,7 +138,8 @@ split_by_comma_list = function(value) {
 // },
 validate = function() {
     var token = localStorage.token || '',
-        userkey = localStorage.userkey || '';
+        userkey = localStorage.userkey || '',
+        domain = localStorage.domain || 'https://api.telegram.org';
 
     if (!userkey || !token) {
         show_message('Please fill both fields!');
@@ -146,7 +147,7 @@ validate = function() {
     }
 
     var req = new XMLHttpRequest();
-    var url = 'https://api.telegram.org/bot' + 
+    var url = domain + '/bot' + 
                      token + 
                     '/sendMessage';
     url += '?chat_id=' + encodeURIComponent(userkey);
@@ -178,6 +179,14 @@ validate = function() {
 save = function() {
     localStorage.userkey = $('userkey').value;
     localStorage.token = $('token').value;
+    // 获取用户输入的值，如果没有输入则使用默认值
+    let domainInput = $('domain').value || 'https://api.telegram.org';
+
+    // 去掉末尾的所有斜杠
+    domainInput = domainInput.replace(/\/+$/, '');
+
+    // 将处理后的域名存储到 localStorage
+    localStorage.domain = domainInput;
     // var sound = sounds[$('sounds').selectedIndex];
     // if (sound) {
     //     localStorage.sound = sounds[$('sounds').selectedIndex].value;
