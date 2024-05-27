@@ -197,7 +197,7 @@ save = function() {
 load = function() {
     $('userkey').value = localStorage.userkey || '';
     $('token').value = localStorage.token || '';
-
+    $('domain').value = localStorage.domain || 'https://api.telegram.org';
     // for (var i = 0; i < sounds.length; i++) {
     //     var sound = sounds[i],
     //         option = document.createElement('option');
